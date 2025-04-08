@@ -44,6 +44,23 @@ def cadastrar_livro():
     conexao.close()
     return jsonify({'mensagem': 'Livro cadastrado com sucesso!'}), 201
 
+@app.route('/remover/<int:id>', methods=['DELETE'])
+def deletar_livro(id):
+    conexao = conectar_bd()
+    cursor = conexao.cursor()
+
+    cursor.execute('SELECT * FROM LIVROS WHERE id = ?', (id,))
+    livro = cursor.fetchone()
+
+    if not livro:
+        conexao.close()
+        return jsonify({'mensagem': 'Livro não encontrado.'}), 404
+
+    cursor.execute('DELETE FROM LIVROS WHERE id = ?', (id,))
+    conexao.commit()
+    conexao.close()
+    return jsonify({'mensagem': 'Livro removido com sucesso!'}), 200
+
 @app.route('/livros', methods=['GET'])
 def listar_livros():
     conexao = conectar_bd()
